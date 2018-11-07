@@ -187,6 +187,28 @@ def load_xml_nuclear_table(datafile, n_range, z_range,
     return data
 
 
+# JEM additions:
+def _draw_star(layer, position, color, name, corner = 'rb'):
+    """Draws star (I hope)"""
+    x = position[0]
+    y = position[1]
+    star = svg.createElement("polygon")
+    star.setAttribute("id", '{}'.format(name))
+    star.setAttribute("stroke", "#000000")
+    star.setAttribute("stroke-width", "0.0")
+    star.setAttribute("stroke-linejoin", "bevel")
+    star.setAttribute("fill", color)
+    star.setAttribute("x", str(position[0]))
+    star.setAttribute("y", str(position[1]))
+    star.setAttribute( "points", 
+                           "{}, {} {}, {} {}, {} {}, {} {}, {}".format(x+100,y+10, x+40,y+198, x+190,y+78, x+10, y+78, x+160, y+198))
+    layer.appendChild(star)
+
+
+# END JEM additions
+
+
+
 def _draw_rectangle(layer, position, color, name):
     """Draws rectangle (basic nuclide on map) position is
     given for left top corner """
@@ -527,7 +549,7 @@ def draw_Oslo_upbend_nuclei(nuclide, layers, position, args):
     if nuclide.comment == "yes":
         primary_color = "#00FFFF"
 
-    _draw_rectangle(layers[0], position,
+    _draw_star(layers[0], position,
                     primary_color, '{}0'.format(nuclide))
 
 
