@@ -105,6 +105,15 @@ for key, value in COLORS.items():
     COLORS[key] = color_to_grayscale_hex(value)
 
 
+
+
+# List of nuclei that have Oslo measurements.
+# Comment indicates upbend status: "yes", "no" or "unclear"
+oslo_nuclides = {
+    "Dy160": Nuclide(A=160, Z=66, comment="yes"),
+}
+
+
     
 
 
@@ -514,164 +523,12 @@ def draw_Oslo_upbend_nuclei(nuclide, layers, position, args):
     """ Draws nuclide data, including primary and secondary decay modes,
         and name of nuclide """
 
-    # List of accepted basic decay modes, primary color is chosen on 
-    # that basis. A '?' mode is for placeholders.
-    basic_decay_modes = ['is', 'a', 'b-', 'b+',
-                           'ec', 'p', '2p', 'sf', 
-                           'n', '2n', '2ec', '2b-']
-    # This reg ex. matches cluster emission marked by isotopic name
-    # it matches names starting by at excatly two digits and
-    # ending with letter(s). Remember that all decay modes are lower cased!
-    # Cluster decays are only secondary or tertiary
-    cluster_re = r'[0-9]{2}([a-z]+)$'
-
-    # First decay mode should be largest and should match one
-    # of basic decay modes
-    if nuclide.decay_modes[0]['mode'] in basic_decay_modes:
-        primary_color = COLORS[nuclide.decay_modes[0]['mode']]
-    elif nuclide.decay_modes[0]['mode'] == '?' and args.unknown:
-        primary_color = COLORS['?']
-    else:
-        # Order of basic and secondary decay modes is not kept well in NWC data
-        # eg. sometimes B+p is given before B+
-        # We will swap two element so any basic mode comes first
-        if len(nuclide.decay_modes) > 1:
-            i = 0
-            for i in range(1, len(nuclide.decay_modes)):
-                if nuclide.decay_modes[i]['mode'] in basic_decay_modes:
-                    nuclide.decay_modes[0], nuclide.decay_modes[i] = nuclide.decay_modes[i], nuclide.decay_modes[0]
-                    primary_color = COLORS[nuclide.decay_modes[0]['mode']]
-                    break
-            else:
-                return
-        else:
-            return
-
-    
-    # Ommit p-unstable and n-unstable (this information
-    # is in half-life)
-    if nuclide.half_life['value'].find('unstable') >= 0:
-        return
-
-    # If there is more decay modes, and if at least one matches
-    # basic decay modes, a secondary color will be used
-    # Large triangle is used for modes with branching > 5%
-    # but not for long lived nuclides (quasi-stable)
-    # small triangle for other
-    # If large triangle is used, a tertiary decay mode might
-    # be indicated with small triangle
-    secondary_size = None
-    tertiary_size  = None
-    if len(nuclide.decay_modes) > 1:
-        for i in range(1, len(nuclide.decay_modes)):
-            if nuclide.decay_modes[i]['mode'] in basic_decay_modes:
-                secondary_color = COLORS[nuclide.decay_modes[i]['mode']]
-                try:
-                    if ( float(nuclide.decay_modes[i]['value']) > 5.0 and
-                         primary_color != COLORS['is'] ) :
-                        secondary_size = 'large'
-                    else:
-                        secondary_size = 'small'
-                    break
-                except ValueError:
-                    secondary_size = 'small'
-            elif re.search(cluster_re, nuclide.decay_modes[i]['mode']) is not None:
-                secondary_size = 'small'
-                secondary_color = COLORS['cluster']
-                break
-
-        if ( len(nuclide.decay_modes) > 2 and
-             ( secondary_size == 'large' or
-               (secondary_size == 'small' and primary_color == COLORS['is'])) ):
-            for i in range(2, len(nuclide.decay_modes)):
-                if nuclide.decay_modes[i]['mode'] in basic_decay_modes:
-                    tertiary_color = COLORS[nuclide.decay_modes[i]['mode']]
-                    tertiary_size  = 'small'
-                    break
-                elif re.search(cluster_re, 
-                               nuclide.decay_modes[i]['mode']) is not None:
-                    tertiary_size = 'small'
-                    tertiary_color = COLORS['cluster']
-                    break
+    primary_color = None
+    if nuclide.comment == "yes":
+        primary_color = "#00FFFF"
 
     _draw_rectangle(layers[0], position,
                     primary_color, '{}0'.format(nuclide))
-
-    if secondary_size == 'large':
-        if secondary_color == COLORS['a']:
-            corner = 'lt'
-        elif ( secondary_color == COLORS['b+'] and 
-               primary_color != COLORS['a'] and 
-               primary_color != COLORS['p'] ) :
-            corner = 'lt'
-        else:
-            corner = 'rb'
-        _draw_triangle(layers[1], position, secondary_color,
-                       '{}1'.format(nuclide), corner)
-    elif secondary_size == 'small':
-        if secondary_color == COLORS['a']:
-            corner = 'lt'
-        elif ( secondary_color == COLORS['b+'] and 
-               primary_color != COLORS['a'] and 
-               primary_color != COLORS['p'] ) :
-            corner = 'lt'
-        elif secondary_color == COLORS['cluster']:
-            corner = 'rt'
-        else:
-            corner = 'rb'
-        _draw_small_triangle(layers[1], position, secondary_color,
-                             '{}1'.format(nuclide), corner)
-
-    if tertiary_size == 'small':
-        if tertiary_color == COLORS['a']:
-            corner = 'lt'
-        elif ( tertiary_color == COLORS['b+'] and 
-               primary_color != COLORS['a'] and 
-               secondary_color != COLORS['a']) :
-            corner = 'lt'
-        elif tertiary_color == COLORS['cluster']:
-            corner = 'rt'
-        else:
-            corner = 'rb'
-        _draw_small_triangle(layers[1], position, tertiary_color,
-                             '{}2'.format(nuclide), corner)
-
-    font_color = FONT_COLOR_BRIGHT if primary_color == COLORS['is'] else FONT_COLOR_DARK
-    if args.names:
-        element_name = nuclide.element + " " + str(nuclide.A) 
-
-        tx = position[0] + SIZE_SHAPE / 2 
-        ty = position[1] + SIZE_GAP + 1.25 * SIZE_FONT
-
-        _draw_text(layers[3], [tx, ty], font_color, SIZE_FONT, element_name)
-
-    if (args.halflives and not(nuclide.half_life['extrapolated'] == 'True')):
-        # For stable and quasi-stable nuclide print isotopic abundance
-        # for unstable - half live
-        if primary_color != COLORS['is']:
-            half_life_string = nuclide.half_life['value'] 
-            sci_re = r'^[-+]?[0-9]*\.?[0-9]+([eE]+[-+]?[0-9]+)$'
-            if re.search(sci_re, half_life_string) is not None:
-                try:
-                    hl = float(half_life_string)
-                    half_life_string = '{0:.1e}'.format(hl)
-                except TypeError:
-                    pass
-            if nuclide.half_life['value'] != '?':
-                half_life_string +=  ' ' + nuclide.half_life['unit']
-                if nuclide.half_life['relation'] != '=':
-                    half_life_string = nuclide.half_life['relation'] + ' ' + half_life_string
-        else:
-            half_life_string = nuclide.decay_modes[0]['value']
-
-        # text position center
-        tx = position[0] + SIZE_SHAPE / 2
-        ty = position[1] + SIZE_SHAPE - 1.5 * SIZE_FONT_HL
-
-        _draw_text(layers[3], [tx, ty], font_color, SIZE_FONT_HL,
-                   half_life_string)
-
-
 
 
 if __name__ == "__main__":
@@ -791,5 +648,34 @@ if __name__ == "__main__":
         draw_magic_lines(layers, n_magic, z_magic, n_limits, z_limits, size)
     if args.numbers:
         draw_numbers(layers, shape, n_limits, z_limits, size)
+
+
+    # JEM: Draw Oslo upbend nuclei:
+    for key, nuclide in oslo_nuclides.items():
+        N = nuclide.N
+        Z = nuclide.Z
+        if N in MAGIC_NUMBERS:
+            if n_magic.get(N) is not None:
+                if n_magic[N][1] < Z:
+                    n_magic[N][1] = Z
+            else:
+                n_magic[N] = [Z, Z]
+        if Z in MAGIC_NUMBERS:
+            if z_magic.get(Z) is not None:
+                if z_magic[Z][1] < N:
+                    z_magic[Z][1] = N
+            else:
+                z_magic[Z] = [N, N]
+
+        shape[N - n_limits[0]][Z - z_limits[0]] = True
+
+        # Position is passed for upper left corner of square
+        x = (N - n_limits[0] + 1) * SIZE_FIELD + SIZE_GAP
+        y = size[1] - (Z - z_limits[0] + 2) * SIZE_FIELD 
+        try:
+            draw_Oslo_upbend_nuclei(nuclide, layers, [x, y], args)
+        except IndexError:
+            print('IndexError: nuclide {}'.format(nuclide))
+
 
     args.outfile.write(svg.toprettyxml(indent="  ", encoding="utf-8").decode("utf-8"))
