@@ -509,6 +509,171 @@ def draw_numbers(layers, shape, n_limits, z_limits, size):
                        SIZE_FONT * 1.5, str(z + z_limits[0]))
 
 
+
+def draw_Oslo_upbend_nuclei(nuclide, layers, position, args):
+    """ Draws nuclide data, including primary and secondary decay modes,
+        and name of nuclide """
+
+    # List of accepted basic decay modes, primary color is chosen on 
+    # that basis. A '?' mode is for placeholders.
+    basic_decay_modes = ['is', 'a', 'b-', 'b+',
+                           'ec', 'p', '2p', 'sf', 
+                           'n', '2n', '2ec', '2b-']
+    # This reg ex. matches cluster emission marked by isotopic name
+    # it matches names starting by at excatly two digits and
+    # ending with letter(s). Remember that all decay modes are lower cased!
+    # Cluster decays are only secondary or tertiary
+    cluster_re = r'[0-9]{2}([a-z]+)$'
+
+    # First decay mode should be largest and should match one
+    # of basic decay modes
+    if nuclide.decay_modes[0]['mode'] in basic_decay_modes:
+        primary_color = COLORS[nuclide.decay_modes[0]['mode']]
+    elif nuclide.decay_modes[0]['mode'] == '?' and args.unknown:
+        primary_color = COLORS['?']
+    else:
+        # Order of basic and secondary decay modes is not kept well in NWC data
+        # eg. sometimes B+p is given before B+
+        # We will swap two element so any basic mode comes first
+        if len(nuclide.decay_modes) > 1:
+            i = 0
+            for i in range(1, len(nuclide.decay_modes)):
+                if nuclide.decay_modes[i]['mode'] in basic_decay_modes:
+                    nuclide.decay_modes[0], nuclide.decay_modes[i] = nuclide.decay_modes[i], nuclide.decay_modes[0]
+                    primary_color = COLORS[nuclide.decay_modes[0]['mode']]
+                    break
+            else:
+                return
+        else:
+            return
+
+    
+    # Ommit p-unstable and n-unstable (this information
+    # is in half-life)
+    if nuclide.half_life['value'].find('unstable') >= 0:
+        return
+
+    # If there is more decay modes, and if at least one matches
+    # basic decay modes, a secondary color will be used
+    # Large triangle is used for modes with branching > 5%
+    # but not for long lived nuclides (quasi-stable)
+    # small triangle for other
+    # If large triangle is used, a tertiary decay mode might
+    # be indicated with small triangle
+    secondary_size = None
+    tertiary_size  = None
+    if len(nuclide.decay_modes) > 1:
+        for i in range(1, len(nuclide.decay_modes)):
+            if nuclide.decay_modes[i]['mode'] in basic_decay_modes:
+                secondary_color = COLORS[nuclide.decay_modes[i]['mode']]
+                try:
+                    if ( float(nuclide.decay_modes[i]['value']) > 5.0 and
+                         primary_color != COLORS['is'] ) :
+                        secondary_size = 'large'
+                    else:
+                        secondary_size = 'small'
+                    break
+                except ValueError:
+                    secondary_size = 'small'
+            elif re.search(cluster_re, nuclide.decay_modes[i]['mode']) is not None:
+                secondary_size = 'small'
+                secondary_color = COLORS['cluster']
+                break
+
+        if ( len(nuclide.decay_modes) > 2 and
+             ( secondary_size == 'large' or
+               (secondary_size == 'small' and primary_color == COLORS['is'])) ):
+            for i in range(2, len(nuclide.decay_modes)):
+                if nuclide.decay_modes[i]['mode'] in basic_decay_modes:
+                    tertiary_color = COLORS[nuclide.decay_modes[i]['mode']]
+                    tertiary_size  = 'small'
+                    break
+                elif re.search(cluster_re, 
+                               nuclide.decay_modes[i]['mode']) is not None:
+                    tertiary_size = 'small'
+                    tertiary_color = COLORS['cluster']
+                    break
+
+    _draw_rectangle(layers[0], position,
+                    primary_color, '{}0'.format(nuclide))
+
+    if secondary_size == 'large':
+        if secondary_color == COLORS['a']:
+            corner = 'lt'
+        elif ( secondary_color == COLORS['b+'] and 
+               primary_color != COLORS['a'] and 
+               primary_color != COLORS['p'] ) :
+            corner = 'lt'
+        else:
+            corner = 'rb'
+        _draw_triangle(layers[1], position, secondary_color,
+                       '{}1'.format(nuclide), corner)
+    elif secondary_size == 'small':
+        if secondary_color == COLORS['a']:
+            corner = 'lt'
+        elif ( secondary_color == COLORS['b+'] and 
+               primary_color != COLORS['a'] and 
+               primary_color != COLORS['p'] ) :
+            corner = 'lt'
+        elif secondary_color == COLORS['cluster']:
+            corner = 'rt'
+        else:
+            corner = 'rb'
+        _draw_small_triangle(layers[1], position, secondary_color,
+                             '{}1'.format(nuclide), corner)
+
+    if tertiary_size == 'small':
+        if tertiary_color == COLORS['a']:
+            corner = 'lt'
+        elif ( tertiary_color == COLORS['b+'] and 
+               primary_color != COLORS['a'] and 
+               secondary_color != COLORS['a']) :
+            corner = 'lt'
+        elif tertiary_color == COLORS['cluster']:
+            corner = 'rt'
+        else:
+            corner = 'rb'
+        _draw_small_triangle(layers[1], position, tertiary_color,
+                             '{}2'.format(nuclide), corner)
+
+    font_color = FONT_COLOR_BRIGHT if primary_color == COLORS['is'] else FONT_COLOR_DARK
+    if args.names:
+        element_name = nuclide.element + " " + str(nuclide.A) 
+
+        tx = position[0] + SIZE_SHAPE / 2 
+        ty = position[1] + SIZE_GAP + 1.25 * SIZE_FONT
+
+        _draw_text(layers[3], [tx, ty], font_color, SIZE_FONT, element_name)
+
+    if (args.halflives and not(nuclide.half_life['extrapolated'] == 'True')):
+        # For stable and quasi-stable nuclide print isotopic abundance
+        # for unstable - half live
+        if primary_color != COLORS['is']:
+            half_life_string = nuclide.half_life['value'] 
+            sci_re = r'^[-+]?[0-9]*\.?[0-9]+([eE]+[-+]?[0-9]+)$'
+            if re.search(sci_re, half_life_string) is not None:
+                try:
+                    hl = float(half_life_string)
+                    half_life_string = '{0:.1e}'.format(hl)
+                except TypeError:
+                    pass
+            if nuclide.half_life['value'] != '?':
+                half_life_string +=  ' ' + nuclide.half_life['unit']
+                if nuclide.half_life['relation'] != '=':
+                    half_life_string = nuclide.half_life['relation'] + ' ' + half_life_string
+        else:
+            half_life_string = nuclide.decay_modes[0]['value']
+
+        # text position center
+        tx = position[0] + SIZE_SHAPE / 2
+        ty = position[1] + SIZE_SHAPE - 1.5 * SIZE_FONT_HL
+
+        _draw_text(layers[3], [tx, ty], font_color, SIZE_FONT_HL,
+                   half_life_string)
+
+
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Create SVG format chart of nuclides')
 
