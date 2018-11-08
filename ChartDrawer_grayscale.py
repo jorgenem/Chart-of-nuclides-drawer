@@ -188,7 +188,7 @@ def load_xml_nuclear_table(datafile, n_range, z_range,
 
 
 # JEM additions:
-def _draw_star(layer, position, color, name, corner = 'rb'):
+def _draw_star(layer, position, color, name):
     """Draws star (I hope)"""
     x = position[0]
     y = position[1]
@@ -200,8 +200,9 @@ def _draw_star(layer, position, color, name, corner = 'rb'):
     star.setAttribute("fill", color)
     star.setAttribute("x", str(position[0]))
     star.setAttribute("y", str(position[1]))
+    scalefactor = 3.2
     star.setAttribute( "points", 
-                           "{}, {} {}, {} {}, {} {}, {} {}, {}".format(x+100,y+10, x+40,y+198, x+190,y+78, x+10, y+78, x+160, y+198))
+                           "{}, {} {}, {} {}, {} {}, {} {}, {}".format(x-SIZE_SHAPE/2 +100/scalefactor,y-SIZE_SHAPE/1.4+10/scalefactor, x-SIZE_SHAPE/2 +40/scalefactor,y-SIZE_SHAPE/1.4+198/scalefactor, x-SIZE_SHAPE/2 +190/scalefactor,y-SIZE_SHAPE/1.4+78/scalefactor, x-SIZE_SHAPE/2 +10/scalefactor, y-SIZE_SHAPE/1.4+78/scalefactor, x-SIZE_SHAPE/2 +160/scalefactor, y-SIZE_SHAPE/1.4+198/scalefactor))
     layer.appendChild(star)
 
 
@@ -548,6 +549,12 @@ def draw_Oslo_upbend_nuclei(nuclide, layers, position, args):
     primary_color = None
     if nuclide.comment == "yes":
         primary_color = "#00FFFF"
+    elif nuclide.comment == "yes":
+        primary_color = "#FF0000"
+    elif nuclide.comment == "yes":
+        primary_color = "#0000FF"
+    else:
+        raise Exception("Invalid upbend")
 
     _draw_star(layers[0], position,
                     primary_color, '{}0'.format(nuclide))
@@ -676,20 +683,22 @@ if __name__ == "__main__":
     for key, nuclide in oslo_nuclides.items():
         N = nuclide.N
         Z = nuclide.Z
-        if N in MAGIC_NUMBERS:
-            if n_magic.get(N) is not None:
-                if n_magic[N][1] < Z:
-                    n_magic[N][1] = Z
-            else:
-                n_magic[N] = [Z, Z]
-        if Z in MAGIC_NUMBERS:
-            if z_magic.get(Z) is not None:
-                if z_magic[Z][1] < N:
-                    z_magic[Z][1] = N
-            else:
-                z_magic[Z] = [N, N]
+        # if N in MAGIC_NUMBERS:
+        #     if n_magic.get(N) is not None:
+        #         if n_magic[N][1] < Z:
+        #             n_magic[N][1] = Z
+        #     else:
+        #         n_magic[N] = [Z, Z]
+        # if Z in MAGIC_NUMBERS:
+        #     if z_magic.get(Z) is not None:
+        #         if z_magic[Z][1] < N:
+        #             z_magic[Z][1] = N
+        #     else:
+        #         z_magic[Z] = [N, N]
 
-        shape[N - n_limits[0]][Z - z_limits[0]] = True
+        # shape[N - n_limits[0]][Z - z_limits[0]] = True
+
+
 
         # Position is passed for upper left corner of square
         x = (N - n_limits[0] + 1) * SIZE_FIELD + SIZE_GAP
@@ -698,6 +707,16 @@ if __name__ == "__main__":
             draw_Oslo_upbend_nuclei(nuclide, layers, [x, y], args)
         except IndexError:
             print('IndexError: nuclide {}'.format(nuclide))
+
+
+        font_color = FONT_COLOR_DARK
+        element_name = nuclide.element + " " + str(nuclide.A) 
+
+        tx = x + SIZE_SHAPE / 2 
+        ty = y + SIZE_GAP + 1.25 * SIZE_FONT
+
+        _draw_text(layers[3], [tx, ty], font_color, SIZE_FONT, element_name)
+
 
 
     args.outfile.write(svg.toprettyxml(indent="  ", encoding="utf-8").decode("utf-8"))
