@@ -110,7 +110,89 @@ for key, value in COLORS.items():
 # List of nuclei that have Oslo measurements.
 # Comment indicates upbend status: "yes", "no" or "unclear"
 oslo_nuclides = {
-    "Dy160": Nuclide(A=160, Z=66, comment="yes"),
+    "La138": Nuclide(A=138, Z=57, comment="yes"),
+    "Zr91": Nuclide(A=91, Z=40, comment="yes"),
+    "Zr92": Nuclide(A=92, Z=40, comment="yes"),
+    "Fe56": Nuclide(A=56, Z=26, comment="yes"),
+    "Fe57": Nuclide(A=57, Z=26, comment="yes"),
+    "V50": Nuclide(A=50, Z=23, comment="yes"),
+    "V51": Nuclide(A=51, Z=23, comment="yes"),
+    "Mo93": Nuclide(A=93, Z=42, comment="yes"),
+    "Mo94": Nuclide(A=94, Z=42, comment="yes"),
+    "Mo95": Nuclide(A=95, Z=42, comment="yes"),
+    "Mo96": Nuclide(A=96, Z=42, comment="yes"),
+    "Mo97": Nuclide(A=97, Z=42, comment="yes"),
+    "Mo98": Nuclide(A=98, Z=42, comment="yes"),
+    "Sc43": Nuclide(A=43, Z=21, comment="yes"),
+    "Sc44": Nuclide(A=44, Z=21, comment="yes"),
+    "Sc45": Nuclide(A=45, Z=21, comment="yes"),
+    "Ti44": Nuclide(A=44, Z=22, comment="yes"),
+    "Ti45": Nuclide(A=45, Z=22, comment="yes"),
+    "Ti46": Nuclide(A=46, Z=22, comment="yes"),
+    "Cd105": Nuclide(A=105, Z=48, comment="yes"),
+    "Cd106": Nuclide(A=106, Z=48, comment="yes"),
+    "Y89": Nuclide(A=89, Z=39, comment="yes"),
+    "Y90": Nuclide(A=90, Z=39, comment="yes"),
+    "Ge73": Nuclide(A=73, Z=32, comment="yes"),
+    "Ge74": Nuclide(A=74, Z=32, comment="yes"),
+    "Ge76": Nuclide(A=76, Z=32, comment="yes"),
+    "Sm151": Nuclide(A=151, Z=62, comment="yes"),
+    "Sm153": Nuclide(A=153, Z=62, comment="yes"),
+    "Ni59": Nuclide(A=59, Z=28, comment="yes"),
+    "Ni60": Nuclide(A=60, Z=28, comment="yes"),
+    "Ni63": Nuclide(A=63, Z=28, comment="yes"),
+    "Ni65": Nuclide(A=65, Z=28, comment="yes"),
+    "Ni69": Nuclide(A=69, Z=28, comment="yes"),
+    "Ni69": Nuclide(A=69, Z=28, comment="yes"),
+    "Ni70": Nuclide(A=70, Z=28, comment="yes"),
+    # "": Nuclide(A=, Z=, comment="yes"),
+
+    "Dy160": Nuclide(A=160, Z=66, comment="no"),
+    "Dy161": Nuclide(A=161, Z=66, comment="no"),
+    "Dy162": Nuclide(A=162, Z=66, comment="no"),
+    "Dy163": Nuclide(A=163, Z=66, comment="no"),
+    "Dy164": Nuclide(A=163, Z=66, comment="no"),
+    "Er166": Nuclide(A=166, Z=68, comment="no"),
+    "Er167": Nuclide(A=167, Z=68, comment="no"),
+    "Yb170": Nuclide(A=170, Z=70, comment="no"),
+    "Yb171": Nuclide(A=171, Z=70, comment="no"),
+    "Yb172": Nuclide(A=172, Z=70, comment="no"),
+    "Sm148": Nuclide(A=148, Z=62, comment="no"),
+    "Sm149": Nuclide(A=149, Z=62, comment="no"),
+    "Sn116": Nuclide(A=116, Z=50, comment="no"),
+    "Sn117": Nuclide(A=117, Z=50, comment="no"),
+    "Sn118": Nuclide(A=118, Z=50, comment="no"),
+    "Sn119": Nuclide(A=119, Z=50, comment="no"),
+    "Sn121": Nuclide(A=121, Z=50, comment="no"),
+    "Sn122": Nuclide(A=122, Z=50, comment="no"),
+    "Cd111": Nuclide(A=111, Z=48, comment="no"),
+    "Cd112": Nuclide(A=112, Z=48, comment="no"),
+    "Th231": Nuclide(A=231, Z=90, comment="no"),
+    "Th232": Nuclide(A=232, Z=90, comment="no"),
+    "Th233": Nuclide(A=233, Z=90, comment="no"),
+    "Pa232": Nuclide(A=232, Z=91, comment="no"),
+    "Pa233": Nuclide(A=233, Z=91, comment="no"),
+    "U237": Nuclide(A=237, Z=92, comment="no"),
+    "U238": Nuclide(A=238, Z=92, comment="no"),
+    "U239": Nuclide(A=239, Z=92, comment="no"),
+    "Pd106": Nuclide(A=106, Z=46, comment="no"),
+    "Pd107": Nuclide(A=107, Z=46, comment="no"),
+    "Pd108": Nuclide(A=108, Z=46, comment="no"),
+    "Np238": Nuclide(A=238, Z=93, comment="no"),
+    "Pu243": Nuclide(A=243, Z=94, comment="no"),
+    # "": Nuclide(A=, Z=, comment="no"),
+
+
+    "Pb205": Nuclide(A=205, Z=82, comment="unclear"),
+    "Pb206": Nuclide(A=206, Z=82, comment="unclear"),
+    "Pb207": Nuclide(A=207, Z=82, comment="unclear"),
+    "Pb208": Nuclide(A=208, Z=82, comment="unclear"),
+    "Pd105": Nuclide(A=105, Z=46, comment="unclear"),
+    "La139": Nuclide(A=139, Z=57, comment="unclear"),
+    "La140": Nuclide(A=140, Z=57, comment="unclear"),
+    "Mo92": Nuclide(A=92, Z=42, comment="unclear"),
+    # "": Nuclide(A=, Z=, comment="unclear"),
+
 }
 
 
@@ -189,7 +271,7 @@ def load_xml_nuclear_table(datafile, n_range, z_range,
 
 # JEM additions:
 def _draw_star(layer, position, color, name):
-    """Draws star (I hope)"""
+    """Draws star """
     x = position[0]
     y = position[1]
     star = svg.createElement("polygon")
@@ -200,11 +282,45 @@ def _draw_star(layer, position, color, name):
     star.setAttribute("fill", color)
     star.setAttribute("x", str(position[0]))
     star.setAttribute("y", str(position[1]))
-    scalefactor = 3.2
+    scalefactor = 3.0
     star.setAttribute( "points", 
                            "{}, {} {}, {} {}, {} {}, {} {}, {}".format(x-SIZE_SHAPE/2 +100/scalefactor,y-SIZE_SHAPE/1.4+10/scalefactor, x-SIZE_SHAPE/2 +40/scalefactor,y-SIZE_SHAPE/1.4+198/scalefactor, x-SIZE_SHAPE/2 +190/scalefactor,y-SIZE_SHAPE/1.4+78/scalefactor, x-SIZE_SHAPE/2 +10/scalefactor, y-SIZE_SHAPE/1.4+78/scalefactor, x-SIZE_SHAPE/2 +160/scalefactor, y-SIZE_SHAPE/1.4+198/scalefactor))
     layer.appendChild(star)
 
+def _draw_diamond(layer, position, color, name):
+    """Draws diamond """
+    # Take coordinates x and y to be center of the current nucleus rectangle
+    x = position[0] + SIZE_SHAPE/2
+    y = position[1] + SIZE_SHAPE/2
+    diamond = svg.createElement("polygon")
+    diamond.setAttribute("id", '{}'.format(name))
+    diamond.setAttribute("stroke", "#000000")
+    diamond.setAttribute("stroke-width", "0.0")
+    diamond.setAttribute("stroke-linejoin", "bevel")
+    diamond.setAttribute("fill", color)
+    diamond.setAttribute("x", str(position[0]))
+    diamond.setAttribute("y", str(position[1]))
+    dwidth_x = 1.7*SIZE_SHAPE/2 # Distance from diamond center to horizontal corner
+    dwidth_y = 2.3*SIZE_SHAPE/2  # and to vertical center
+    diamond.setAttribute( "points", 
+                           "{}, {} {}, {} {}, {} {}, {}".format(x-dwidth_x, y, x, y+dwidth_y, x+dwidth_x, y, x, y-dwidth_y))
+    layer.appendChild(diamond)
+
+def _draw_circle(layer, position, color, name):
+    """Draws circle """
+    x = position[0]
+    y = position[1]
+    circle = svg.createElement("circle")
+    circle.setAttribute("id", '{}'.format(name))
+    # circle.setAttribute("stroke", "#000000")
+    # circle.setAttribute("stroke-width", "0.0")
+    # circle.setAttribute("stroke-linejoin", "bevel")
+    circle.setAttribute("fill", color)
+    circle.setAttribute("cx", str(x+SIZE_SHAPE/2))
+    circle.setAttribute("cy", str(y+SIZE_SHAPE/2))
+    scalefactor = 1.2
+    circle.setAttribute("r", str(SIZE_SHAPE/scalefactor))
+    layer.appendChild(circle)
 
 # END JEM additions
 
@@ -327,7 +443,7 @@ def _draw_line(layer, begin, end, name):
     line = svg.createElement("line")
     line.setAttribute("id", str(name))
     line.setAttribute("stroke", "#000000")
-    line.setAttribute("stroke-width", "1.0")
+    line.setAttribute("stroke-width", "1.2")
     line.setAttribute("x1", str(x1))
     line.setAttribute("y1", str(y1))
     line.setAttribute("x2", str(x2))
@@ -548,16 +664,19 @@ def draw_Oslo_upbend_nuclei(nuclide, layers, position, args):
 
     primary_color = None
     if nuclide.comment == "yes":
-        primary_color = "#00FFFF"
-    elif nuclide.comment == "yes":
-        primary_color = "#FF0000"
-    elif nuclide.comment == "yes":
-        primary_color = "#0000FF"
+        primary_color = "#FFCD16"
+        _draw_star(layers[3], position,
+                        primary_color, '{}0'.format(nuclide))
+    elif nuclide.comment == "no":
+        primary_color = "#B23914"
+        _draw_circle(layers[3], position,
+                        primary_color, '{}0'.format(nuclide))
+    elif nuclide.comment == "unclear":
+        primary_color = "#3A4FCC"
+        _draw_diamond(layers[3], position,
+                        primary_color, '{}0'.format(nuclide))
     else:
-        raise Exception("Invalid upbend")
-
-    _draw_star(layers[0], position,
-                    primary_color, '{}0'.format(nuclide))
+        raise Exception("Invalid value")
 
 
 if __name__ == "__main__":
@@ -614,7 +733,7 @@ if __name__ == "__main__":
     # layer3 for text
 
     layers = []
-    for l in range(4):
+    for l in range(5):
         layer = svg.createElement("g")
         layer.setAttribute("id", "layer{}".format(l))
         layer.setAttribute("fill", "none")
@@ -715,7 +834,8 @@ if __name__ == "__main__":
         tx = x + SIZE_SHAPE / 2 
         ty = y + SIZE_GAP + 1.25 * SIZE_FONT
 
-        _draw_text(layers[3], [tx, ty], font_color, SIZE_FONT, element_name)
+        # Add text to layer 4, which I added. Should be the very top layer. This is the only thing there.
+        _draw_text(layers[4], [tx, ty], font_color, SIZE_FONT, element_name)
 
 
 
